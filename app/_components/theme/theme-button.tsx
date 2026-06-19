@@ -15,7 +15,7 @@ export function ModeToggle({ className }: { className?: string }) {
   const { setTheme } = useTheme();
 
   return (
-    <DropdownMenu>
+    <DropdownMenu aria-label="Theme options dropdown">
       <DropdownMenuTrigger asChild>
         <Button
           variant="outline"

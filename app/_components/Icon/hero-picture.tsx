@@ -4,6 +4,8 @@ export default function HeroPicture() {
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 800 572.62"
       role="img"
+      aria-labelledby="A programmer and his setup"
+      aria-hidden="true"
       className="aspect-800/572 w-full"
     >
       <g transform="translate(-28.583 -435)">

@@ -6,6 +6,8 @@ export default function AboutMePicture() {
       height="684.73"
       viewBox="0 0 829.692 684.73"
       role="img"
+      aria-labelledby="A programmer working with his laptop"
+      aria-hidden="true"
       className="w-7/10"
     >
       <g
