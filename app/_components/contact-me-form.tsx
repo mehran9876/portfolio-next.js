@@ -47,6 +47,7 @@ export default function ContactMeField() {
               name="name"
               type="text"
               autoComplete="name"
+              className="text-sm sm:text-base"
               maxLength={30}
               placeholder="Full name"
               required
@@ -61,6 +62,7 @@ export default function ContactMeField() {
               name="email"
               type="email"
               autoComplete="email"
+              className="text-sm sm:text-base"
               maxLength={60}
               placeholder="Email"
               required
@@ -74,6 +76,7 @@ export default function ContactMeField() {
               id="subject"
               name="subject"
               type="text"
+              className="text-sm sm:text-base"
               maxLength={50}
               placeholder="Subject"
             />
@@ -85,6 +88,7 @@ export default function ContactMeField() {
             <Textarea
               id="message"
               name="message"
+              className="text-sm sm:text-base"
               rows={4}
               placeholder="Type your message here"
               required
@@ -92,7 +96,7 @@ export default function ContactMeField() {
           </Field>
           <Field>
             <Button
-              className="bg-blue-600 text-sky-50 hover:cursor-pointer hover:bg-blue-500 dark:bg-sky-400 dark:text-slate-800 dark:hover:bg-sky-500"
+              className="bg-blue-600 py-4 text-sky-50 hover:cursor-pointer hover:bg-blue-500 sm:py-5 dark:bg-sky-400 dark:text-slate-800 dark:hover:bg-sky-500"
               type="submit"
               disabled={isPending}
             >

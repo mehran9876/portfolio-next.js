@@ -1,43 +1,54 @@
 "use server";
 
 import { Resend } from "resend";
+import { z } from "zod";
+import { EmailTemplate } from "@/app/_components/email-template";
+import { errorLogger } from "@/lib/logger";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-export async function sendContactEmail(formData: FormData) {
-  const name = formData.get("name") as string;
-  const email = formData.get("email") as string;
-  const subject = formData.get("subject") as string;
-  const message = formData.get("message") as string;
+const ContactSchema = z.object({
+  name: z.string().min(2, "Name too short").max(50, "Name too long"),
+  email: z.string().email("Invalid Email address"),
+  subject: z.string().max(100).optional().default("No Subject"),
+  message: z.string().min(5, "Message is too short").max(2000),
+});
 
-  // Basic server-side guard
-  if (!name || !email || !message) {
-    return { success: false, error: "All fields are required." };
-  }
+type Contact = z.infer<typeof ContactSchema>;
+
+export async function sendContactEmail(formData: FormData) {
+  const validatedFields = ContactSchema.safeParse({
+    name: formData.get("name"),
+    email: formData.get("email"),
+    subject: formData.get("subject"),
+    message: formData.get("message"),
+  });
+
+  if (!validatedFields.success)
+    return {
+      success: false,
+      error: validatedFields.error.flatten().fieldErrors + "",
+    };
+
+  const { name, email, subject, message }: Contact = validatedFields.data;
 
   try {
-    const { data, error } = await resend.emails.send({
+    // We don't need the data.id so we don't store it
+    const { error } = await resend.emails.send({
       from: "Portfolio Contact <onboarding@resend.dev>", // Swap with your custom domain later if you verify one
-      to: ["mehranghari9876@gmail.com"], // Your personal inbox where you want to receive inquiries
+      to: ["mehranghari9876@gmail.com"],
       subject: `${subject} from ${name}`,
-      replyTo: email,
-      html: `
-        <h3>New Contact Form Submission</h3>
-        <p><strong>Name:</strong> ${name}</p>
-        <p><strong>Email:</strong> ${email}</p>
-        <p><strong>Message:</strong></p>
-        <p style="white-space: pre-wrap;">${message}</p>
-      `,
+      react: EmailTemplate({ name, email, message }),
     });
 
     if (error) {
-      console.error("Resend API Error:", error);
+      errorLogger("Resend API Error", { error });
       return { success: false, error: error.message };
     }
 
     return { success: true };
   } catch (err) {
-    console.error("Server Action Exception:", err);
-    return { success: false, error: "Something went wrong on our end." };
+    errorLogger("Contact email failed", { error: err });
+    return { success: false, error: "Failed to send email" };
   }
 }
