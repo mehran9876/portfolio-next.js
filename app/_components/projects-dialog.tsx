@@ -10,10 +10,13 @@ import {
 } from "@/app/_components/ui/dialog";
 import { ScrollArea } from "@/app/_components/ui/scroll-area";
 import { DialogTitle } from "@radix-ui/react-dialog";
-import { Project } from "@/app/_components/projects";
+import { Project } from "@/lib/data/projects";
 import { Separator } from "@/app/_components/ui/separator";
 import { useSearchParams } from "next/navigation";
 import { ChevronDown } from "lucide-react";
+import { cn } from "@/lib/utils";
+
+const BASE_PICTURE_ANIMATION_SPEED = 5;
 
 interface ProjectDialogProps {
   project: Project;
@@ -39,34 +42,36 @@ export default function ProjectDialog({
   const imageBoxAspectRatio = 1.6;
   const projectPictureAnimationTimeMultiplier =
     imageBoxAspectRatio / image.aspectRatio;
-  const projectPictereBaseDuration = 5;
 
   const projectPictureAnimationDuration =
     (
-      projectPictereBaseDuration * projectPictureAnimationTimeMultiplier
+      BASE_PICTURE_ANIMATION_SPEED * projectPictureAnimationTimeMultiplier
     ).toFixed(2) + "s";
 
   const showScrollButtonCallback = useCallback(
     (node: HTMLDivElement | null) => {
-      if (!node) {
-        if (observerRef.current) {
-          observerRef.current?.disconnect();
-          observerRef.current = null;
-        }
-        return;
-      }
+      if (!node) return;
+
       const rootElement = node.closest(".showScrollBtnViewPort");
 
-      if (!observerRef.current) {
-        observerRef.current = new IntersectionObserver(
-          (entries) => {
-            if (entries.at(0)?.isIntersecting) setShowScrollButton(false);
-            else setShowScrollButton(true);
-          },
-          { root: rootElement, threshold: [0.1] },
-        );
-        observerRef.current.observe(node);
-      }
+      const observer = new IntersectionObserver(
+        (entries) => {
+          if (entries.at(0)?.isIntersecting) {
+            setShowScrollButton(false);
+          } else {
+            setShowScrollButton(true);
+          }
+        },
+        { root: rootElement, threshold: [0.1] },
+      );
+
+      observer.observe(node);
+      observerRef.current = observer;
+
+      return () => {
+        observer.disconnect();
+        observerRef.current = null;
+      };
     },
     [],
   );
@@ -80,6 +85,7 @@ export default function ProjectDialog({
         <figure className="group-focus:border-ring group-focus:ring-ring/50 flex flex-1 flex-col hover:cursor-pointer">
           <div className="relative mb-2 aspect-16/10 w-full overflow-hidden rounded-2xl shadow-lg hover:shadow-xl active:shadow-lg sm:mb-4">
             <div className="fancy absolute top-0 left-0 z-2 h-full w-full opacity-0 transition-opacity duration-300 group-hover:opacity-70"></div>
+            {inProgress && <InProgressBadge />}
             <Image
               src={image.cardSrc ? image.cardSrc : image.src}
               alt={image.cardAlt ? image.cardAlt : image.alt}
@@ -96,7 +102,7 @@ export default function ProjectDialog({
               src="/preview.png"
               width={58}
               height={40}
-              alt="binacular icon"
+              alt="binocular icon"
               className="absolute top-1/2 left-1/2 z-2 -translate-x-1/2 -translate-y-1/2 transform opacity-0 transition-opacity duration-300 group-hover:opacity-100"
               loading="lazy"
             />
@@ -116,7 +122,8 @@ export default function ProjectDialog({
                 {title}
               </DialogTitle>
             </DialogHeader>
-            <div className="relative mb-4 aspect-16/9 w-full overflow-hidden rounded-xl sm:mb-12">
+            <div className="relative mb-4 aspect-video w-full overflow-hidden rounded-xl sm:mb-12">
+              {inProgress && <InProgressBadge size="md" />}
               <Image
                 src={image.src}
                 alt={image.alt}
@@ -161,12 +168,13 @@ export default function ProjectDialog({
         </ScrollArea>
 
         <div
-          className={`from-background via-background/70 pointer-events-none absolute right-0 bottom-0 left-0 h-43 bg-gradient-to-t to-transparent transition-opacity duration-300 ${
+          className={`from-background via-background/70 bg-gradient-to-top pointer-events-none absolute right-0 bottom-0 left-0 h-43 to-transparent transition-opacity duration-300 ${
             showScrollButton ? "opacity-100" : "opacity-0"
           }`}
         ></div>
 
         <div
+          aria-label="Scroll down button"
           className={`absolute bottom-20 left-1/2 -translate-x-1/2 ${showScrollButton ? "block" : "hidden"}`}
         >
           <button
@@ -198,3 +206,23 @@ function ProjectTechItem({ icon, children }: ProjectTechItemProps) {
     </li>
   );
 }
+
+const InProgressBadge = ({
+  size = "sm",
+  className,
+  ...props
+}: {
+  size?: "sm" | "md";
+  className?: string;
+}) => (
+  <span
+    className={cn(
+      "absolute top-2 left-2 z-10 rounded-full bg-yellow-400 px-2 py-1 text-xs font-semibold text-yellow-950",
+      size === "md" ? "px-3 py-1.5 text-sm" : "",
+      className,
+    )}
+    {...props}
+  >
+    In Progress
+  </span>
+);
