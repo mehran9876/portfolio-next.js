@@ -37,10 +37,11 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <Header />
+          <main className="mt-23.25 flex max-h-full flex-col items-center sm:mt-16.25">
+            {children}
+          </main>
         </ThemeProvider>
-        <main className="mt-23.25 flex max-h-full flex-col items-center sm:mt-16.25">
-          {children}
-        </main>
+
         <Toaster />
       </body>
     </html>

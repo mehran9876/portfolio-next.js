@@ -5,7 +5,7 @@ export default function Heron() {
   return (
     <section
       id="hero"
-      className="section hero-background w-full pt-23.25 text-sm sm:text-base"
+      className="section hero-background w-full text-sm sm:pt-24 sm:text-base"
     >
       <div className="mx-auto grid w-9/10 max-w-360 items-center gap-18 pt-12 md:grid-cols-2 md:py-24">
         <div className="flex flex-col items-center gap-2 text-center sm:gap-4 md:items-start md:text-start">
@@ -25,7 +25,7 @@ export default function Heron() {
           <div className="flex items-center gap-6">
             <Link
               href="#contact"
-              className="fancy rounded-md px-5 py-3 text-base text-slate-100 transition-shadow duration-100 hover:cursor-pointer hover:inset-shadow-sm hover:inset-shadow-blue-600 active:inset-shadow-blue-900 sm:px-8 sm:text-lg"
+              className="fancy rounded-md px-4 py-2 text-sm text-slate-100 transition-shadow duration-100 hover:cursor-pointer hover:inset-shadow-sm hover:inset-shadow-blue-600 active:inset-shadow-blue-900 sm:px-8 sm:text-base"
             >
               Contact me...
             </Link>

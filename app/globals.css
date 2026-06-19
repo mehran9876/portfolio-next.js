@@ -127,7 +127,7 @@
   }
 
   body {
-    @apply bg-[var(--background)] text-[var(--foreground)];
+    @apply bg-background text-foreground antialiased;
   }
 }
 
@@ -141,8 +141,6 @@
 @utility fancy {
   background: var(--fancy-gradient);
 }
-
-/* TODO: fix this part */
 
 @keyframes scroll-vertical-yoyo {
   0% {

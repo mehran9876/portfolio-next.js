@@ -1,4 +1,4 @@
-import AboutMePicture from "@/app/_components/Icon/aboutme-picture";
+import AboutMePicture from "@/app/_components/Icon/about-me-picture";
 
 export default function AboutMe() {
   return (
@@ -14,7 +14,7 @@ export default function AboutMe() {
         <h2 className="fancy-text mb-8 bg-linear-to-r text-3xl font-extrabold text-transparent">
           Who is Mehran?
         </h2>
-        <p className="">
+        <p className="text-sm sm:text-base">
           I’m Mehran, a web developer focused on building high-performance
           applications with clean, efficient architecture. While I specialize in
           the JavaScript ecosystem—specifically React and Next.js—my real
